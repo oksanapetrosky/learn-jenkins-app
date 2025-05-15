@@ -35,9 +35,13 @@ pipeline {
         }    
     }
     post {
-        always {
-            //junit 'test-results/junit.xml'
-        }
+  always {
+    script {
+      if (fileExists('junit.xml')) {
+        junit 'junit.xml'
+      } else {
+        echo 'No JUnit test report found. Skipping junit step.'
+      }
     }
-
+  }
 }
