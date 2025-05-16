@@ -104,22 +104,24 @@ pipeline {
             } // <-- closes `parallel`
         } 
 
-        stage('Deploy') {
-            agent {
-                docker {
-                    image 'node:18-alpine'
-                    reuseNode true
-                }
-            }
-            steps {
-                sh '''
-                npm install netlify-cli
-                node_modules/.bin/netlify --version
-                '''
+ stage('Deploy') {
+  agent {
+    docker {
+      image 'node:18-alpine'
+      reuseNode true
+    }
+  }
+  environment {
+    NETLIFY_AUTH_TOKEN = credentials('NETLIFY_TOKEN')
+  }
+  steps {
+    sh '''
+      npm install netlify-cli
+      npx netlify deploy --prod --dir=build --auth=$NETLIFY_AUTH_TOKEN --site=your-site-id
+    '''
+  }
+}
 
-            }
-        }
-    } 
 
     post {
         always {
