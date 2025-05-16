@@ -113,16 +113,16 @@ pipeline {
   }
   environment {
     NETLIFY_AUTH_TOKEN = credentials('NETLIFY_TOKEN')
-    NETLIFY_SITE_ID = credentials('NETLIFY_SITE_ID')  // Don't hardcode the ID
+    NETLIFY_SITE_ID = credentials('NETLIFY_SITE_ID')
   }
   steps {
     sh '''
       npm install netlify-cli
-      npx netlify deploy --prod --dir=build --auth=$NETLIFY_AUTH_TOKEN --site=$NETLIFY_SITE_ID
+      npx netlify deploy --prod --no-build --dir=build --auth=$NETLIFY_AUTH_TOKEN --site=$NETLIFY_SITE_ID
     '''
   }
- }
 }
+
     post {
         always {
             script {
