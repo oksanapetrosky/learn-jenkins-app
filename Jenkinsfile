@@ -58,11 +58,53 @@ pipeline {
 
   stages {
     stage('Build') {
-      // your build steps
+      agent {
+        docker {
+          image 'node:18-alpine'
+          reuseNode true
+        }
+      }
+      steps {
+        sh '''
+          ls -la
+          node --version
+          npm --version
+          npm ci
+          npm run build
+          ls -la
+        '''
+      }
     }
 
     stage('Test') {
-      // your test steps
+      parallel {
+        stage('Unit tests') {
+          agent {
+            docker {
+              image 'node:18-alpine'
+              reuseNode true
+            }
+          }
+          steps {
+            sh '''
+              echo "Running unit tests..."
+              # test -f build/index.html
+            '''
+          }
+        }
+
+        stage('E2E') {
+          agent {
+            docker {
+              image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
+              reuseNode true
+            }
+          }
+          steps {
+            echo 'Placeholder for end-to-end test commands'
+          }
+        }
+      }
     }
 
     stage('Deploy') {
@@ -83,7 +125,7 @@ pipeline {
         '''
       }
     }
-  } // ✅ CLOSES stages here!
+  }
 
   post {
     always {
@@ -96,4 +138,5 @@ pipeline {
       }
     }
   }
-} // ✅ CLOSES pipeline here
+}
+
